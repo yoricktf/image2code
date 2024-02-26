@@ -14,7 +14,8 @@ padding, margin, border, etc. Match the colors and sizes exactly.
 - Do not add comments in the code such as "<!-- Add other navigation links as needed -->" and "<!-- ... other news items ... -->" in place of writing the full code. WRITE THE FULL CODE.
 - Repeat elements as needed to match the screenshot. For example, if there are 15 items, the code should have 15 items. DO NOT LEAVE comments like "<!-- Repeat for each news item -->" or bad things will happen.
 - For images, use placeholder images from https://placehold.co and include a detailed description of the image in the alt text so that an image generation AI can generate the image later.
-- make it responsive.
+- Make it responsive.
+- Structure the HTML Code properly for Web Accessibility.
 - Take your time for the answer.
 
 In terms of libraries,
