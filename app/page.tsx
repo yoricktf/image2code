@@ -1,10 +1,15 @@
 'use client'
-import { MouseEventHandler } from 'react'
-import { Button } from '@/components/ui/button'
+import { MouseEvent } from 'react'
+import { FileCard } from '@files-ui/react'
 import { Form } from './form'
 import { useState } from 'react'
 import { DragAndDrop } from './draganddrop'
+import ToggleButton, { ButtonColors } from '@/components/ui/toggleButton'
+import ReloadButton from '@/components/ui/reloadButton'
 import ProtectedRoute from '@/components/protectedRoute'
+import Swal from 'sweetalert2'
+import withReactContent from 'sweetalert2-react-content'
+import { getAuth, signOut } from 'firebase/auth'
 
 const STEPS = {
 	INITIAL: 'INITIAL',
@@ -39,6 +44,20 @@ export default function Home() {
 	const [result, setResult] = useState('')
 	const [step, setStep] = useState(STEPS.INITIAL)
 	const [copySuccess, setCopySuccess] = useState(false)
+	const [activeButton, setActiveButton] = useState<string | null>(null)
+
+	const filterButtonsNames = ['Material', 'Tailwind', 'Bootstrap', 'CSS']
+
+	const handleSignOut = () => {
+		const auth = getAuth()
+		signOut(auth)
+			.then(() => {
+				console.log('User signed out successfully')
+			})
+			.catch((error) => {
+				console.error('Error signing out: ', error)
+			})
+	}
 
 	const transformToCode = async (body: string) => {
 		setStep(STEPS.LOADING)
@@ -49,21 +68,18 @@ export default function Home() {
 				'Content-Type': 'application/json',
 			},
 		})
-
 		if (!res.ok || res.body == null) {
 			setStep(STEPS.ERROR)
 			throw new Error('Error trying to generate code.')
 		}
-
 		setStep(STEPS.PREVIEW)
-
 		// leer el streaming de datos
 		for await (const chunk of streamReader(res)) {
 			setResult((prev) => prev + chunk)
 		}
 	}
 
-	const copyToClipboard = (e: MouseEventHandler) => {
+	const copyToClipboard = () => {
 		const codeBlock = document.getElementById('code-block')
 
 		if (codeBlock) {
@@ -76,7 +92,7 @@ export default function Home() {
 				const successful = document.execCommand('copy')
 				setCopySuccess(successful)
 				setTimeout(() => {
-					setCopySuccess(false) // Reset the success message after 2 seconds
+					setCopySuccess(false)
 				}, 2000)
 			} catch (err) {
 				console.error('Error al copiar el texto: ', err)
@@ -85,20 +101,39 @@ export default function Home() {
 	}
 
 	const transformImageToCode = async (file: File) => {
-		const img = await toBase64(file)
-		await transformToCode(JSON.stringify({ img }))
+		withReactContent(Swal)
+			.fire({
+				title: 'Do you want to convert this image?',
+				html: (
+					<div className="flex flex-col items-center justify-center my-4">
+						<FileCard file={file} preview info />
+					</div>
+				),
+				showCancelButton: true,
+				confirmButtonText: 'Ok!',
+			})
+			.then(async (result) => {
+				if (result.isConfirmed) {
+					const img = await toBase64(file)
+					await transformToCode(JSON.stringify({ img }))
+				}
+			})
 	}
 
 	const transformUrlToCode = async (url: string) => {
 		await transformToCode(JSON.stringify({ url }))
+	}
+	const handleButtonClick = (buttonId: string) => {
+		setActiveButton(activeButton === buttonId ? null : buttonId)
 	}
 
 	const [background, html = ''] = result.split('|||')
 
 	return (
 		<ProtectedRoute>
+			<ReloadButton />
 			<div className="grid grid-cols-[400px_1fr]">
-				<aside className="flex flex-col justify-between min-h-screen p-4 bg-gray-900">
+				<aside className="flex flex-col justify-between min-h-screen max-h-screen p-4 bg-gray-900 top-0 sticky">
 					<header className="text-center">
 						<h1 className="text-3xl font-semibold">Image 2 Code</h1>
 						<h2 className="text-sm opacity-75">Transform your images to code in just seconds!</h2>
@@ -106,18 +141,36 @@ export default function Home() {
 
 					<section>
 						<div className="flex flex-wrap items-center">
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-blue-500 px-2 py-1 text-white">React Component</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-red-500 px-2 py-1 text-white">Angular Component</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-green-500 px-2 py-1 text-white">Vue Component</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-purple-500 px-2 py-1 text-white">Bootstrap</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-blue-500 px-2 py-1 text-white">Tailwind</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-red-800 px-2 py-1 text-white">Material</div>
-							<div className="mr-2 mb-2 cursor-pointer rounded bg-blue-600 px-2 py-1 text-white">CSS</div>
+							{Object.keys(ButtonColors).map((color, index) => (
+								<ToggleButton
+									key={index}
+									color={color as keyof typeof ButtonColors}
+									isActive={activeButton === color}
+									onClick={() => handleButtonClick(color)}
+								>
+									{filterButtonsNames[index]}
+								</ToggleButton>
+							))}
 						</div>
 					</section>
 
 					<footer>
-						Developed with ❤️ by <a href="https://github.com/jamoragar">Jamoragar</a>
+						<section>
+							<div className="flex flex-wrap items-center ">
+								<button
+									className="mr-2 mb-2 cursor-pointer rounded bg-red-600 px-2 py-1 text-white w-full text-center transition-all duration-100 --
+										hover:shadow-md border border-red-500 hover:bg-gradient-to-t hover:from-red-800 before:to-red-900
+										hover:-translate-y-[3px]"
+									type="button"
+									onClick={handleSignOut}
+								>
+									Sign Out
+								</button>
+							</div>
+						</section>
+						<span className="flex justify-center">
+							 Developed with ❤️ by <a href="https://github.com/jamoragar">Jamoragar</a>
+						</span>
 					</footer>
 				</aside>
 
@@ -177,8 +230,9 @@ export default function Home() {
 											</div>
 											<div className="absolute top-2 end-2 bg-gray-50 dark:bg-gray-700">
 												<button
-													onClick={(e) => copyToClipboard}
-													className="text-gray-900 dark:text-gray-400 m-0.5 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700 rounded-lg py-2 px-2.5 inline-flex items-center justify-center bg-white border"
+													onClick={copyToClipboard}
+													className="text-gray-900 dark:text-gray-400 m-0.5 hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-600 dark:hover:bg-gray-700
+														rounded-lg py-2 px-2.5 inline-flex items-center justify-center bg-white border"
 												>
 													{copySuccess ? (
 														<span id="success-message" className="inline-flex items-center">

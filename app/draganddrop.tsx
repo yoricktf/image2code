@@ -6,7 +6,9 @@ import { useState } from 'react'
 export const DragAndDrop = ({ transformImageToCode }: { transformImageToCode: (file: File) => Promise<void> }) => {
 	const updateFiles = (files: ExtFile[]) => {
 		const file = files[0].file
-		if (file != null) transformImageToCode(file)
+		if (file != null) {
+			transformImageToCode(file)
+		}
 	}
 
 	return (
