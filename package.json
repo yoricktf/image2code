@@ -22,6 +22,7 @@
     "openai": "^4.20.1",
     "react": "^18",
     "react-dom": "^18",
+    "react-joyride": "^2.7.4",
     "sweetalert2": "^11.10.5",
     "sweetalert2-react-content": "^5.0.7",
     "tailwind-merge": "^2.0.0",

@@ -1,9 +1,11 @@
 'use client'
 import { MouseEvent } from 'react'
 import { FileCard } from '@files-ui/react'
+import ReactJoyride from 'react-joyride'
 import { Form } from './form'
 import { useState } from 'react'
 import { DragAndDrop } from './draganddrop'
+import { useFirstTimeCheck } from '@/app/hooks/useFirstTimeCheck'
 import { pageTransitionAnim } from '@/lib/animate'
 import { MotionPage } from '@/components/motionPage'
 import ToggleButton, { ButtonColors } from '@/components/ui/toggleButton'
@@ -48,6 +50,30 @@ export default function Home() {
 	const [copySuccess, setCopySuccess] = useState(false)
 	const [activeButton, setActiveButton] = useState<string | null>(null)
 	const [technology, setTechnology] = useState<string>('')
+	const steps = [
+		{
+			disableBeacon: true,
+			target: '#filters',
+			content: '1.- Select the style framwork that you want.',
+		},
+		{
+			target: '#dragAndDrop',
+			content:
+				'2.- If you click in this area, you can search for an image to upload. Or just drag and drop your image.',
+		},
+		{
+			target: '#pasteUrl',
+			content: '3.- Paste the URL address of your image here',
+		},
+		{
+			target: '#reloadButton',
+			content: '4.- When you upload your image and get the code. You can click here to start again from the begining.',
+		},
+		{
+			target: '#signOut',
+			content: '5.- If you are done, you can finish your session with this button.',
+		},
+	]
 
 	const filterButtonsNames = ['Material Design', 'Tailwind', 'Bootstrap', 'CSS']
 
@@ -137,11 +163,11 @@ export default function Home() {
 	}
 
 	const [background, html = ''] = result.split('|||')
+	const isFirstTime = useFirstTimeCheck()
 
 	return (
 		<MotionPage initial="hide" animate="show" exit="hide" variants={pageTransitionAnim}>
 			<ProtectedRoute>
-				<ReloadButton />
 				<div className="grid grid-cols-[400px_1fr]">
 					<aside className="flex flex-col justify-between min-h-screen max-h-screen p-4 bg-gray-900 top-0 sticky">
 						<header className="text-center">
@@ -152,7 +178,7 @@ export default function Home() {
 						<section>
 							<h2 className="mb-4 text-xl font-semibold">Styles:</h2>
 
-							<div className="flex flex-wrap items-center">
+							<div id="filters" className="flex flex-wrap items-center">
 								{Object.keys(ButtonColors).map((color, index) => (
 									<ToggleButton
 										key={index}
@@ -168,7 +194,7 @@ export default function Home() {
 
 						<footer>
 							<section>
-								<div className="flex flex-wrap items-center ">
+								<div id="signOut" className="flex flex-wrap items-center ">
 									<button
 										className="mr-2 mb-2 cursor-pointer rounded bg-red-600 px-2 py-1 text-white w-full text-center transition-all duration-100 --
 											hover:shadow-md border border-red-500 hover:bg-gradient-to-t hover:from-red-800 before:to-red-900
@@ -216,8 +242,12 @@ export default function Home() {
 								<div className="flex flex-col gap-4">
 									<h2 className="mt-4 flex flex-col items-center text-2xl opacity-85">{activeButton && technology}</h2>
 
-									<DragAndDrop transformImageToCode={transformImageToCode} />
-									<Form transformUrlToCode={transformUrlToCode} />
+									<div id="dragAndDrop">
+										<DragAndDrop transformImageToCode={transformImageToCode} />
+									</div>
+									<div id="pasteUrl">
+										<Form transformUrlToCode={transformUrlToCode} />
+									</div>
 								</div>
 							)}
 
@@ -290,6 +320,37 @@ export default function Home() {
 							)}
 						</section>
 					</main>
+					{isFirstTime && (
+						<ReactJoyride
+							steps={steps}
+							continuous
+							scrollToFirstStep
+							showProgress
+							showSkipButton
+							styles={{
+								options: {
+									// modal arrow and background color
+									arrowColor: '#eee',
+									backgroundColor: '#eee',
+									// page overlay color
+									overlayColor: 'rgba(0, 0, 0, 0.45)',
+									//button color
+									primaryColor: 'blue',
+									//text color
+									textColor: '#333',
+
+									//width of modal
+									width: 500,
+									//zindex of modal
+									zIndex: 1000,
+								},
+							}}
+						/>
+					)}
+
+					<div id="reloadButton">
+						<ReloadButton />
+					</div>
 				</div>
 			</ProtectedRoute>
 		</MotionPage>
