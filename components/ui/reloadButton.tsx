@@ -1,17 +1,13 @@
 import React from 'react'
-import { RefreshIcon } from '@heroicons/react'
 
 const ReloadButton: React.FC = () => {
 	const reloadPage = () => {
-		// Aquí puedes definir lo que sucede cuando se hace clic en el botón
-		console.log('Page reloaded!')
-		// Por ejemplo, recargar la página:
 		window.location.reload()
 	}
 
 	return (
 		<button
-			onClick={reloadPage} // Asegúrate de definir esta función
+			onClick={reloadPage}
 			className="fixed bottom-5 right-5 h-12 w-12 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 focus:outline-none
 				focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 transition-all"
 			aria-label="Reload Page"
