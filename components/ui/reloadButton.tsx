@@ -11,6 +11,7 @@ const ReloadButton: React.FC = () => {
 			className="fixed bottom-5 right-5 h-12 w-12 rounded-full bg-blue-500 text-white shadow-lg hover:bg-blue-600 focus:outline-none
 				focus:ring-2 focus:ring-blue-700 focus:ring-offset-2 transition-all"
 			aria-label="Reload Page"
+			title="Restart the application."
 		>
 			<svg
 				xmlns="http://www.w3.org/2000/svg"

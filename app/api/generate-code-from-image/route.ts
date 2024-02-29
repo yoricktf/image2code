@@ -1,11 +1,19 @@
 import OpenAI from 'openai'
 import { OpenAIStream, StreamingTextResponse } from 'ai'
 
+const SUPORTED_TECHNOLOGIES: any = {
+	Tailwind: "<script src='https://cdn.tailwindcss.com'></script>",
+	Bootstrap:
+		"<link href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css' rel='stylesheet' integrity='sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH' crossorigin='anonymous'>",
+	'Material Design':
+		"<link href='https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css' rel='stylesheet'> <script src='https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js'></script>",
+}
+
 const USER_PROMPT = 'Generate code for a web page that looks exactly like this'
 
-const SYSTEM_PROMPT = `You are an expert Tailwind developer
+const SYSTEM_PROMPT = (technology: string) => `You are an expert ${technology} developer
 You take screenshots of a reference web page from the user, and then build single page apps 
-using Tailwind, HTML and JS.
+using ${technology} components, HTML and JS.
 
 - Make sure the app looks exactly like the screenshot.
 - Pay close attention to background color, text color, font size, font family, 
@@ -19,7 +27,7 @@ padding, margin, border, etc. Match the colors and sizes exactly.
 - Take your time for the answer.
 
 In terms of libraries,
-- Use this script to include Tailwind: <script src="https://cdn.tailwindcss.com"></script>
+${technology === 'CSS' ? '' : `- Use this script to include ${technology}: ${SUPORTED_TECHNOLOGIES[technology]}`} 
 - You can use Google Fonts
 - Font Awesome for icons: <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"></link>
 
@@ -33,8 +41,8 @@ const openai = new OpenAI({
 export const runtime = 'edge'
 
 export async function POST(req: Request) {
-	const { url, img } = await req.json()
-
+	const { url, img, technology } = await req.json()
+	const technologySelected = technology ?? 'CSS'
 	const imageUrl = url ?? img
 
 	const response = await openai.chat.completions.create({
@@ -44,7 +52,7 @@ export async function POST(req: Request) {
 		messages: [
 			{
 				role: 'system',
-				content: SYSTEM_PROMPT,
+				content: SYSTEM_PROMPT(technologySelected),
 			},
 			{
 				role: 'user',

@@ -47,8 +47,9 @@ export default function Home() {
 	const [step, setStep] = useState(STEPS.INITIAL)
 	const [copySuccess, setCopySuccess] = useState(false)
 	const [activeButton, setActiveButton] = useState<string | null>(null)
+	const [technology, setTechnology] = useState<string>('')
 
-	const filterButtonsNames = ['Material', 'Tailwind', 'Bootstrap', 'CSS']
+	const filterButtonsNames = ['Material Design', 'Tailwind', 'Bootstrap', 'CSS']
 
 	const handleSignOut = () => {
 		const auth = getAuth()
@@ -63,9 +64,14 @@ export default function Home() {
 
 	const transformToCode = async (body: string) => {
 		setStep(STEPS.LOADING)
+		const originalBody = JSON.parse(body)
+		const valuesInBody = {
+			...originalBody,
+			technology: technology,
+		}
 		const res = await fetch('/api/generate-code-from-image', {
 			method: 'POST',
-			body,
+			body: JSON.stringify(valuesInBody),
 			headers: {
 				'Content-Type': 'application/json',
 			},
@@ -125,8 +131,9 @@ export default function Home() {
 	const transformUrlToCode = async (url: string) => {
 		await transformToCode(JSON.stringify({ url }))
 	}
-	const handleButtonClick = (buttonId: string) => {
+	const handleButtonClick = (buttonId: string, technology: string) => {
 		setActiveButton(activeButton === buttonId ? null : buttonId)
+		setTechnology(technology)
 	}
 
 	const [background, html = ''] = result.split('|||')
@@ -139,17 +146,19 @@ export default function Home() {
 					<aside className="flex flex-col justify-between min-h-screen max-h-screen p-4 bg-gray-900 top-0 sticky">
 						<header className="text-center">
 							<h1 className="text-3xl font-semibold">Image 2 Code</h1>
-							<h2 className="text-sm opacity-75">Transform your images to code in just seconds!</h2>
+							<h2 className="text-md opacity-75">Transform your images to code in just seconds!</h2>
 						</header>
 
 						<section>
+							<h2 className="mb-4 text-xl font-semibold">Styles:</h2>
+
 							<div className="flex flex-wrap items-center">
 								{Object.keys(ButtonColors).map((color, index) => (
 									<ToggleButton
 										key={index}
 										color={color as keyof typeof ButtonColors}
 										isActive={activeButton === color}
-										onClick={() => handleButtonClick(color)}
+										onClick={() => handleButtonClick(color, filterButtonsNames[index])}
 									>
 										{filterButtonsNames[index]}
 									</ToggleButton>
@@ -205,6 +214,8 @@ export default function Home() {
 
 							{step === STEPS.INITIAL && (
 								<div className="flex flex-col gap-4">
+									<h2 className="mt-4 flex flex-col items-center text-2xl opacity-85">{activeButton && technology}</h2>
+
 									<DragAndDrop transformImageToCode={transformImageToCode} />
 									<Form transformUrlToCode={transformUrlToCode} />
 								</div>
