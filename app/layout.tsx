@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
+import { PageTransitionComponent } from '@/components/pageTransition'
 import { AuthProvider } from './hooks/useAuth'
 
 const inter = Inter({ subsets: ['latin'] })
@@ -14,7 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="es">
 			<body className={`${inter.className} dark`}>
-				<AuthProvider>{children}</AuthProvider>
+				<PageTransitionComponent>
+					<AuthProvider>{children}</AuthProvider>
+				</PageTransitionComponent>
 			</body>
 		</html>
 	)
