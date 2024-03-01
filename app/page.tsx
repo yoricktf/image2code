@@ -174,15 +174,17 @@ export default function Home() {
 							<h2 className="text-md opacity-75 mt-2">Transform your images of the web to code in just seconds!</h2>
 							<div className="overflow-y-auto py-4 px-3 mt-4 bg-gray-50 rounded dark:bg-gray-800 h-auto">
 								<p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-justify ">
-									Welcome to our unique application, designed to take your web components iamges a step further by
+									Welcome to our unique application, designed to take your web components images a step further by
 									transforming them into functional code. Powered by Chat GPT-4 and advanced image analysis
 									technologies, our platform interprets your images and converts them into HTML, JavaScript, and CSS,
 									Tailwind, Bootstrap or Mterial code structures, depending on your preferences.
+									<b> By default the application will use CSS as a reference.</b>
 								</p>
 								<h3 className="mt-4 text-md font-semibold text-gray-900 dark:text-white opacity-75">But remember!</h3>
 								<p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-justify">
-									We use https://placehold.co for components that uses images on it. So if you upload a wallpaper or a
-									draw, we can not give you some SVG of that... for now!
+									If you dont pick any framework of your preference, by default the application is using just CSS.{' '}
+									<br /> We use https://placehold.co for components that uses images on it. So if you upload a wallpaper
+									or a draw, we can not give you some SVG of that... for now!
 								</p>
 							</div>
 						</header>
