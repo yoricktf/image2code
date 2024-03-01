@@ -5,7 +5,7 @@ import ReactJoyride from 'react-joyride'
 import { Form } from './form'
 import { useState } from 'react'
 import { DragAndDrop } from './draganddrop'
-import { useFirstTimeCheck } from '@/app/hooks/useFirstTimeCheck'
+import useFirstTimeCheck from '@/app/hooks/useFirstTimeCheck'
 import { pageTransitionAnim } from '@/lib/animate'
 import { MotionPage } from '@/components/motionPage'
 import ToggleButton, { ButtonColors } from '@/components/ui/toggleButton'
@@ -76,9 +76,9 @@ export default function Home() {
 	]
 
 	const filterButtonsNames = ['Material Design', 'Tailwind', 'Bootstrap', 'CSS']
+	const auth = getAuth()
 
 	const handleSignOut = () => {
-		const auth = getAuth()
 		signOut(auth)
 			.then(() => {
 				console.log('User signed out successfully')
@@ -163,11 +163,10 @@ export default function Home() {
 	}
 
 	const [background, html = ''] = result.split('|||')
-	const isFirstTime = useFirstTimeCheck()
-
+	const isFirstTime = useFirstTimeCheck(Boolean(auth.currentUser))
 	return (
-		<MotionPage initial="hide" animate="show" exit="hide" variants={pageTransitionAnim}>
-			<ProtectedRoute>
+		<ProtectedRoute>
+			<MotionPage initial="hide" animate="show" exit="hide" variants={pageTransitionAnim}>
 				<div className="grid grid-cols-[400px_1fr]">
 					<aside className="flex flex-col justify-between min-h-screen max-h-screen p-4 bg-gray-900 top-0 sticky">
 						<header className="text-center">
@@ -320,7 +319,7 @@ export default function Home() {
 							)}
 						</section>
 					</main>
-					{isFirstTime && (
+					{isFirstTime && auth && (
 						<ReactJoyride
 							steps={steps}
 							continuous
@@ -352,7 +351,7 @@ export default function Home() {
 						<ReloadButton />
 					</div>
 				</div>
-			</ProtectedRoute>
-		</MotionPage>
+			</MotionPage>
+		</ProtectedRoute>
 	)
 }

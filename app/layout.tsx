@@ -15,9 +15,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 	return (
 		<html lang="es">
 			<body className={`${inter.className} dark`}>
-				<PageTransitionComponent>
-					<AuthProvider>{children}</AuthProvider>
-				</PageTransitionComponent>
+				<AuthProvider>
+					<PageTransitionComponent>{children}</PageTransitionComponent>
+				</AuthProvider>
 			</body>
 		</html>
 	)

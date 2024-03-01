@@ -1,16 +1,19 @@
 import { useEffect, useState } from 'react'
 
-export const useFirstTimeCheck = () => {
-	const [isFirstTime, setIsFirstTime] = useState<boolean | null>(null)
+const useFirstTimeCheck = (isAuthenticated: boolean) => {
+	const [isFirstTime, setIsFirstTime] = useState<boolean>(false)
 
 	useEffect(() => {
-		const storedValue = localStorage.getItem('firstTimeHere')
+		if (isAuthenticated) {
+			const isFirstTime = !localStorage.getItem('firstTimeHere')
 
-		if (!storedValue) {
-			localStorage.setItem('firstTimeHere', 'true') // Establece que el usuario ya ha visitado
-			setIsFirstTime(true) // Actualiza el estado a verdadero
+			if (isFirstTime) {
+				localStorage.setItem('firstTimeHere', 'true')
+				setIsFirstTime(true)
+			}
 		}
-	}, [])
-
+	}, [isAuthenticated])
 	return isFirstTime
 }
+
+export default useFirstTimeCheck
