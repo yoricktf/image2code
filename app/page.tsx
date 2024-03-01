@@ -179,6 +179,11 @@ export default function Home() {
 									technologies, our platform interprets your images and converts them into HTML, JavaScript, and CSS,
 									Tailwind, Bootstrap or Mterial code structures, depending on your preferences.
 								</p>
+								<h3 className="mt-4 text-md font-semibold text-gray-900 dark:text-white opacity-75">But remember!</h3>
+								<p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-justify">
+									We use https://placehold.co for components that uses images on it. So if you upload a wallpaper or a
+									draw, we can not give you some SVG of that... for now!
+								</p>
 							</div>
 						</header>
 
