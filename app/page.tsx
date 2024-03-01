@@ -171,7 +171,15 @@ export default function Home() {
 					<aside className="flex flex-col justify-between min-h-screen max-h-screen p-4 bg-gray-900 top-0 sticky">
 						<header className="text-center">
 							<h1 className="text-3xl font-semibold">Image 2 Code</h1>
-							<h2 className="text-md opacity-75">Transform your images to code in just seconds!</h2>
+							<h2 className="text-md opacity-75 mt-2">Transform your images of the web to code in just seconds!</h2>
+							<div className="overflow-y-auto py-4 px-3 mt-4 bg-gray-50 rounded dark:bg-gray-800 h-auto">
+								<p className="mt-2 text-sm text-gray-600 dark:text-gray-400 text-justify ">
+									Welcome to our unique application, designed to take your web components iamges a step further by
+									transforming them into functional code. Powered by Chat GPT-4 and advanced image analysis
+									technologies, our platform interprets your images and converts them into HTML, JavaScript, and CSS,
+									Tailwind, Bootstrap or Mterial code structures, depending on your preferences.
+								</p>
+							</div>
 						</header>
 
 						<section>
